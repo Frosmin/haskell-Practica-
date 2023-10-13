@@ -109,4 +109,6 @@ lsita2 xs n  = xs!!(n-1)
 
 --Definir las funciones length, filter, zip utilizando las otras funciones
 
+--hola 
 
+f x = x
