@@ -1,3 +1,4 @@
+import qualified Main as 0
 
 
 
@@ -109,6 +110,21 @@ lsita2 xs n  = xs!!(n-1)
 
 --Definir las funciones length, filter, zip utilizando las otras funciones
 
---hola 
 
-f x = x
+
+
+--Definir una función que reciba una matriz y devuelva su transpuesta
+
+
+--[[1,2,3],
+--[4,5,6],
+--[7,8,9]]
+
+
+get mss c = map(!!c) mss    --saca los valore deseados de una matriz (LA SACA LA COLUMNA DESEADA)
+
+ultimaCol matriz = length(head matriz)
+
+--transpuesta mass = map(get mss)[0..ultimaCol]
+
+--transponer matriz = (map head matriz) : transponer (map tail matriz)
