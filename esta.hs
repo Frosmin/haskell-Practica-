@@ -1,6 +1,7 @@
 
 
 
+
 f1 :: Bool -> Int -> Int -> Int
 f1 x y z = if x then y+10 else z
 
@@ -156,3 +157,24 @@ fm mat1 mat2 = multiTodasFilas mat1(transpuesta mat2)
 
 
 --Definir una función que reciba una lista de números y devuelva todos los números pares
+lista xs = filter (even) xs
+
+--Definir una función que reciba una lista de listas y devuelva una lista de sus longitudes.
+funci xs = map length xs
+
+--Definir una función que reciba una lista de listas y devuelva solo aquellas cuya longitud sea par.
+
+par xss = filter(even) (map(length) xss)
+
+--Definir una función que reciba una lista de listas de números y borre todos los números pares de estas listas
+borar xss = map (filter (odd)) xss
+
+--Definir una función que reciba una lista de listas y devuelva una lista formada por los penúltimos elementos de las listas
+
+pen2 xss = map penultimo xss
+    where penultimo xs = xs !! (length xs -2)
+
+
+--Definir una función que reciba un número y devuelva una lista con los posibles divisores del número.
+
+divi n = map (n/) [0..n]
