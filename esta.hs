@@ -1,4 +1,6 @@
 
+
+
 f1 :: Bool -> Int -> Int -> Int
 f1 x y z = if x then y+10 else z
 
@@ -124,13 +126,33 @@ filtercito xs f  = [x|x <- xs, f x]
 --[7,8,9]]
 
 
-getCol mss c = map (!!c) mss    --saca los valore deseados de una matriz (LA SACA LA COLUMNA DESEADA)
+
+
+
+getCol mss c = map (!!c) mss    
+getFila mss c =map take((c+1) mss)
 
 ultimaCol matriz = length (head matriz) -1
 
 transpuesta mss = map(getCol mss)[0..ultimaCol mss]
 
---transponer matriz = (map head matriz) : transponer (map tail matriz)
 
 
 
+
+mul xs ys = sum (zipWith (*) xs ys)
+
+--multiplicaion de matrizes 
+
+multi mat1 mat2 = mul(getFila mat1 0) (getCol mat2 0)
+
+multiFila mat fs = map(mul fs) mat
+
+multiTodasFilas mat1 mat2 = map(multiFila mat2) mat1
+
+fm mat1 mat2 = multiTodasFilas mat1(transpuesta mat2)
+
+
+
+
+--Definir una función que reciba una lista de números y devuelva todos los números pares
