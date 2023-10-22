@@ -1,6 +1,4 @@
-import Text.XHtml (yellow)
-
-
+import System.Win32 (COORD(xPos))
 
 
 f1 :: Bool -> Int -> Int -> Int
@@ -342,3 +340,24 @@ f111 x y z = x (y z)(y z)
 f221 e x y z w = if x&&(y x) then z else w z
         where w a |a = e
                   |otherwise = z
+
+
+listaOrdenada xs f = listaOrdenada xs f 0
+            where listaOrdenada xs f i | i >= (length xs)-1 = True 
+                     |otherwise = if f (xs!!i) (xs!!(i+1)) == True then listaOrdenada xs f (i+1) else False
+
+
+
+restaLita xs ys = restaLita xs ys [] 0
+       where restaLita xs xy bacia i | i >=(length xs) = bacia
+                                  |xs!!i == xy!!i = restaLita xs xy bacia (i+1)
+                                  | otherwise = restaLita xs xy (xs!!i : bacia) (i+1)  
+
+existe xs n = existe xs n 0
+    where existe xs n i | i >= length xs = False
+              |xs!!i == n = True
+              | i < length xs = existe xs n (i+1)
+              
+
+rotarListas xs n i | n == i = xs   
+                   | 
