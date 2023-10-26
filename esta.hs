@@ -1,4 +1,4 @@
-import System.Win32 (COORD(xPos))
+
 
 
 f1 :: Bool -> Int -> Int -> Int
@@ -359,5 +359,83 @@ existe xs n = existe xs n 0
               | i < length xs = existe xs n (i+1)
               
 
-rotarListas xs n i | n == i = xs   
-                   | 
+rotarListas xs n 
+    | n <= 0 = xs   
+    |otherwise =  rotarListas (init( (xs!!(length xs -1)) : xs)) (n-1) 
+    
+    
+
+--Una función que reciba dos listas xs ys y retorne una lista con las posiciones de inicio donde xs aparece en ys. Por ejemplo:
+--posiciones[1,1][1,1,1,2,1,1,2]=>[0,1,4]
+
+posiciones xs ys i i2 nueva
+        | (length ys -1) == i = nueva
+        | (xs!!i2) == (ys!!i) && (xs!!(i2+1)) == (ys!!(i+1)) = posiciones xs ys (i+1) i2 (i : nueva)
+        | otherwise =  posiciones xs ys (i+1) i2 nueva
+
+
+
+--------------------------------------------Tarea------------------------------------------------------------------------------------
+--multi 2 numeros en base a sumas
+sumas x y r
+    | y == 0 = r
+    |otherwise = (sumas x (y-1) (r+x)) 
+
+    --potencia de un numerator
+
+potencia x y = potencia x y 1
+    where potencia x y r 
+                 | y == 0 = r
+                 |otherwise = (potencia x (y-1) (r*x)) 
+
+--sumatoria de los dijitos de un numero
+indicesum x 
+            | x < 10 = x
+            | otherwise = (mod x 10) + indicesum (quot x 10) 
+
+--cosiente residuo
+cosRes x y 
+    | x < y = (0,x)
+    |otherwise = (cociente + 1, residuo)
+     where (cociente, residuo ) =cosRes (x-y) y
+
+
+sumatoria n 
+    | n == 0 = 0
+    | otherwise = n + sumatoria(n-1)
+
+
+-- invertir un numerator
+invertirNumero 0 = 0
+invertirNumero n = (mod n 10) + invertirNumero (quot n 10)
+   
+
+mimap f [] = []
+mimap f (x:xs) = f x:(mimap f xs)
+
+mifilter f [] = []
+mifilter f (x:xs) = if (f x) == True then x:(mifilter f xs) else mifilter f xs
+
+mizip [] [] = [] 
+mizip (x:xs) (y:ys) = (x,y) : mizip xs ys
+
+mizipWith f _ []  = []
+mizipWith f [] _  = []
+mizipWith f (x:xs) (y:ys) =  (f x y):  (mizipWith f xs ys )
+
+-- length 
+
+milength [] = 0
+milength (x:xs) = 1 + milength xs 
+
+--head 
+mihead (x:xs) = x
+
+miTail (xs:x) = x
+
+miTake 0 (x:xs) = []
+miTake n (x:xs) = x : miTake (n-1) xs
+
+--drop
+miDrop 0 (x:xs) = x:[]
+miDrop n (x:xs) = miDrop (n-1) xs
