@@ -439,3 +439,16 @@ miTake n (x:xs) = x : miTake (n-1) xs
 --drop
 miDrop 0 (x:xs) = x:[]
 miDrop n (x:xs) = miDrop (n-1) xs
+
+-- litas y me devuelve la lista en forma tupla para y devuelve su valor y posicon (a,1) ['a','b']
+cadena [] _ = []
+cadena (x:xs) i = (x,i) : cadena xs (i+1)
+
+--elemto maximo de una litas 
+maximoLita xs = maximoLita xs 1
+    where maximoLita [] mayor = [mayor]
+          maximoLita (x:xs) mayor = if mayor < x then maximoLita xs x else maximoLita xs mayor   
+
+-- elimianr elemento dado de la lita
+eliminarElemento [] e = []
+eliminarElemento (x:xs) e = if x == e then  eliminarElemento xs e else x : eliminarElemento xs e
