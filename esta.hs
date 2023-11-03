@@ -1,6 +1,4 @@
 
-
-
 f1 :: Bool -> Int -> Int -> Int
 f1 x y z = if x then y+10 else z
 
@@ -431,7 +429,7 @@ milength (x:xs) = 1 + milength xs
 --head 
 mihead (x:xs) = x
 
-miTail (xs:x) = x
+miTail (x:xs) = xs
 
 miTake 0 (x:xs) = []
 miTake n (x:xs) = x : miTake (n-1) xs
@@ -439,6 +437,12 @@ miTake n (x:xs) = x : miTake (n-1) xs
 --drop
 miDrop 0 (x:xs) = x:[]
 miDrop n (x:xs) = miDrop (n-1) xs
+
+miSum [] = 0
+miSum (x:xs) = x + (miSum xs)
+
+
+
 
 -- litas y me devuelve la lista en forma tupla para y devuelve su valor y posicon (a,1) ['a','b']
 cadena [] _ = []
@@ -452,3 +456,248 @@ maximoLita xs = maximoLita xs 1
 -- elimianr elemento dado de la lita
 eliminarElemento [] e = []
 eliminarElemento (x:xs) e = if x == e then  eliminarElemento xs e else x : eliminarElemento xs e
+
+
+miTakeWhile f [] = []
+miTakeWhile f (x:xs) = if f x == True then x : miTakeWhile f xs else []
+
+
+miDropWhile f []  = []
+miDropWhile f (x:xs)  = if f x == True then miDropWhile f xs else x : xs
+
+miPosicion [] p i = -1
+miPosicion (x:xs) p i = if p == i then x else miPosicion xs p (i+1)
+
+miConcat [] = []
+miConcat (x:xs) = x ++ miConcat xs 
+
+
+--Practica recursividad
+--Definir una función que compare 2 listas y devuelva True si las listas son iguales
+compararDosListas [] [] = True
+compararDosListas [] _ = False
+compararDosListas _ [] = False
+compararDosListas (x:xs) (y:ys) = if x == y then compararDosListas xs ys else False 
+
+--2. Definir una función que fusione 2 listas ordenadas en una 3ra. ordenada (sin necesidad de ordenar).
+
+ordenarListas [] ys = ys
+ordenarListas (x:xs) ys = ordenarListas xs (meter x ys) 
+
+meter n [] = [n]
+meter n (x:xs) = if n < x || n == x then n:x:xs else x: meter n xs
+
+--3. Definir una función que verifique si una lista de listas podría ser considerada una matriz
+
+m1 = [[1,2,3],
+      [4,5,6],
+      [7,8,9]]
+
+m2 =  [[1,4,3],
+       [4,5,6],
+       [7,8,9]]
+
+tamañoFila (x:xs) = length x
+
+filasMismoTam [] tam = True
+filasMismoTam (x:xs) tam = if length x == tam then filasMismoTam xs tam else False 
+
+contadorFilas [] = 0
+contadorFilas (x:xs) = 1+ contadorFilas xs  
+
+esMatriz xs = if (filasMismoTam xs (tamañoFila xs)) == True && contadorFilas xs > 1 then True else False  
+
+--Definir una función que reciba 1 matriz y una función de orden y devuelva True si la matriz esta ordenada de acuerdo a la función de orden.
+
+
+estaOrdenada [x] f = True
+estaOrdenada (x:y:xs) f = if f x y == True then estaOrdenada (y:xs) f else False 
+
+matrizEstaOrdenada [] f = True
+matrizEstaOrdenada (x:xs) f = if estaOrdenada x f == True then matrizEstaOrdenada xs f else False
+
+matrizEstaOrdenada2 xs f = if estaOrdenada (miConcat xs) f  == True then True else False 
+
+--Definir una función que reciba una lista de números y devuelva todos los números pares
+esPar n = if mod n 2 == 0 then True else False
+
+numerosPares [] = []
+numerosPares (x:xs) = if esPar x == True then x : numerosPares xs else numerosPares xs 
+
+
+
+--Definir una función que reciba una lista de listas y devuelva solo aquellas cuya longitud sea par.
+listaEsPar xs = esPar (length xs) 
+
+matrizPar [] = []
+matrizPar (x:xs) = if listaEsPar x == True then x : matrizPar xs else matrizPar xs 
+
+--7. Definir una función que reciba una lista de listas de números y borre todos los números pares de estas listas
+
+borraNumerosParesLita [] = []
+borraNumerosParesLita (x:xs) = if esPar x then borraNumerosParesLita xs else x : borraNumerosParesLita xs 
+
+borrarParesMatriz [] = []
+borrarParesMatriz (x:xss) = borraNumerosParesLita x : borrarParesMatriz xss
+
+
+--Definir una función que reciba una lista de listas y devuelva una lista formada por los penúltimos elementos de las listas
+
+penultimoLista (x:xs) = if length xs == 1 then x:[] else penultimoLista xs
+
+penultimosMatriz [] = []
+penultimosMatriz (x:xss) = penultimoLista x : penultimosMatriz xss 
+union xss = miConcat (penultimosMatriz xss)
+
+-- 9 Definir una función que reciba un número y devuelva una lista con los posibles divisores del número.
+
+
+
+
+--multiplicaion matriz
+m3 = [[1,2],
+      [3,4]]
+
+m3t = [[1,3],
+       [2,4]]
+
+columnas [] i = []
+columnas (x:xss) i = x!!i : columnas xss i  
+
+transpu (x:xss) = tran (x:xss) 0 (length x)
+tran [] i n = []
+tran xss i n =  if i /= n then columnas xss i : tran xss (i+1) n else []
+
+
+--Definir una función que reciba un número y devuelva una lista con los posibles divisores del número.
+
+divisores3 n i 
+    | i == n = [n]
+    | mod n i == 0 = i: divisores3 n (i+1) 
+    |otherwise = divisores3 n (i+1)
+
+
+--Definir una función (f xs ys ) que verifique si la lista xs está incluida en la lista ys, devolviendo verdadero o falso según caso.
+
+estaEnlista [] [] = True
+estaEnlista (x:xs) [] = False
+estaEnlista (x:xs) (y:ys) = if estaEn (x:xs) (y:ys) == True then True else estaEnlista (x:xs) ys
+
+estaEn [] _ = True 
+estaEn _ [] = False
+estaEn (x:xs) (y:ys) = if x == y then estaEn xs ys else False   
+
+--cuantas veces aparece patron en lista 
+
+cuantasVeces xs [] = 0
+cuantasVeces xs (y:ys) = if estaEn xs (y:ys) == True then 1+ cuantasVeces xs ys else cuantasVeces xs ys
+
+--posiciones donde se encuentra el patron en una lista 
+
+posicionEnLista2 xs [] i = []
+posicionEnLista2 xs (y:ys) i = if estaEn xs (y:ys) == True then i: posicionEnLista2 xs ys (i+1) else posicionEnLista2 xs ys (i+1) 
+
+fauxParallamar xs ys = posicionEnLista2 xs ys 0
+
+-- tipos 
+{-I. Definir los siguientes tipos de datos
+ ZonaGeografica que permita representar las 3 zonas geográficas de Bolivia
+(valles, llanos y altiplano).
+ Departamento que permita representar los 9 departamentos de Bolivia.-}
+
+{-1. Una función que reciba un zona y devuelva un mensaje indicando sus
+características
+2. Una función que reciba un departamento y devuelva True si pertenece a la zona de
+los valles, falso en otro caso.
+3. Una función que reciba un departamento y devuelva la zona a la que corresponde
+el departamento.
+4. Una función que reciba un lista de departamentos y devuelva aquellos que
+pertenecen a la zona de los llanos o de los valles.-}
+
+data Zonas = Valles|Llanos|Altiplano deriving (Show,Eq)
+data Departamentos = CB|SC|LP|OR|SU|PO|TA|BN|PA deriving (Show,Eq)
+
+caracteristicas::Zonas -> String 
+caracteristicas zon 
+    |zon == Valles ="clima tempaldo"
+    |zon == Llanos ="Arido, Planicie"
+    |otherwise = "altura , planice"
+
+
+
+esllano::Departamentos -> Zonas
+esllano dep 
+    |dep == CB = Valles
+    |dep == LP = Altiplano
+    |otherwise = Llanos
+
+
+
+dondePertenece [] = []
+dondePertenece (x:xs) = if esllano x /= Altiplano then x:dondePertenece xs else dondePertenece xs 
+
+
+{-II. Sean las siguientes definiciones de tipo:
+type Dia = Int
+type Mes= Int
+type Anio = Int
+type Fecha=(Dia,Mes,Anio)
+type Periodo=(Fecha,Fecha)
+type Nombre=String
+type Presidente=(Nombre,Periodo)
+el tipo Presidente es un par que representa el Nombre del presidente y el período
+de tiempo en que gobernó.
+Definir :
+
+
+1. Una función que reciba un Periodo y devuelva el tiempo transcurrido en años.
+2. Una función que reciba un Presidente y devuelva el tiempo total en años que
+gobernó.
+3. Definir una función que reciba dos presidentes y devuelva aquel que gobernó más
+tiempo.
+4. Una función que reciba una lista de presidentes y devuelva el nombre del
+presidente que menos tiempo gobernó.
+5. Una función que reciba una lista de presidentes y devuelva una lista con los
+nombres de los presidentes que gobernaron antes del año 1990.
+6. Una función que reciba una lista de presidentes y devuelva la cantidad de
+presidentes que gobernaron menos de 4 años.
+7. Una función que reciba una lista de presidentes y la ordene ascendentemente por
+la fecha en que fue presidente.-}
+
+
+type Dia = Int
+type Mes= Int
+type Anio = Int
+type Fecha=(Dia,Mes,Anio)
+type Periodo=(Fecha,Fecha)
+type Nombre=String
+type Presidente=(Nombre,Periodo)
+
+
+tiempoTranscurido:: Periodo -> Int
+tiempoTranscurido ((d1,m1,a1),(d2,m2,a2)) = a2 - a1
+
+
+simon::Presidente
+simon = ("simon",((20,10,2003),(20,10,2023)))
+
+samuel::Presidente
+samuel = ("samuel",((5,10,2000),(5,10,2023)))
+
+tiempoQueGoberno:: Presidente -> Int
+tiempoQueGoberno (nombre,periodo) = tiempoTranscurido periodo
+
+
+cualGovernoMas::Presidente -> Presidente -> Presidente
+cualGovernoMas presi1@(nombre1,((d1,m1,a1),(d2,m2,a2))) presi2@(nombre2,((d12,m12,a12),(d22,m22,a22)))  
+        |(tiempoQueGoberno (nombre1,((d1,m1,a1),(d2,m2,a2)))) > (tiempoQueGoberno (nombre2,((d12,m12,a12),(d22,m22,a22))) ) = presi1
+        |otherwise = presi2
+
+
+
+
+cualGovernoMas2 :: Presidente -> Presidente -> Presidente
+cualGovernoMas2 presidente1@(nombre1, periodo1) presidente2@(nombre2, periodo2)
+  | tiempoQueGoberno presidente1 > tiempoQueGoberno presidente2 = presidente1
+  | otherwise = presidente2
+--Terminar hacer que devuela el presidente
