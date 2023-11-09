@@ -1,3 +1,4 @@
+import Distribution.Compat.Lens (_1)
 
 f1 :: Bool -> Int -> Int -> Int
 f1 x y z = if x then y+10 else z
@@ -661,6 +662,7 @@ presidente que menos tiempo gobernó.
 nombres de los presidentes que gobernaron antes del año 1990.
 6. Una función que reciba una lista de presidentes y devuelva la cantidad de
 presidentes que gobernaron menos de 4 años.
+
 7. Una función que reciba una lista de presidentes y la ordene ascendentemente por
 la fecha en que fue presidente.-}
 
@@ -670,7 +672,7 @@ type Mes= Int
 type Anio = Int
 type Fecha=(Dia,Mes,Anio)
 type Periodo=(Fecha,Fecha)
-type Nombre=String
+
 type Presidente=(Nombre,Periodo)
 
 
@@ -683,6 +685,13 @@ simon = ("simon",((20,10,2003),(20,10,2023)))
 
 samuel::Presidente
 samuel = ("samuel",((5,10,2000),(5,10,2023)))
+
+pepe::Presidente
+pepe = ("pepe",((10,10,1989),(10,10,1990)))
+
+
+juan2::Presidente
+juan2 = ("juan",((10,10,1800),(10,10,1990)))
 
 tiempoQueGoberno:: Presidente -> Int
 tiempoQueGoberno (nombre,periodo) = tiempoTranscurido periodo
@@ -700,4 +709,186 @@ cualGovernoMas2 :: Presidente -> Presidente -> Presidente
 cualGovernoMas2 presidente1@(nombre1, periodo1) presidente2@(nombre2, periodo2)
   | tiempoQueGoberno presidente1 > tiempoQueGoberno presidente2 = presidente1
   | otherwise = presidente2
---Terminar hacer que devuela el presidente
+
+obtenerNombre (nombre,periodo) = nombre
+
+menosTiempoGoberno:: [Presidente] -> String
+menosTiempoGoberno [x] = obtenerNombre x
+menosTiempoGoberno (x:y:xs) = if cualGovernoMas2 x y == x then menosTiempoGoberno (y:xs)  else menosTiempoGoberno (x:xs) 
+
+
+
+queAñoGoberno:: Presidente -> Int
+queAñoGoberno (nombre1,((d1,m1,a1),(d2,m2,a2))) = a2
+
+
+queAñoFueElejido:: Presidente -> Int
+queAñoFueElejido (nombre1,((d1,m1,a1),(d2,m2,a2))) = a1
+
+antesde1990 :: [Presidente] -> [Nombre]
+antesde1990 [] = []
+antesde1990 (x:xs) = if queAñoGoberno x <= 1990 then (obtenerNombre x) : antesde1990 xs else antesde1990 xs 
+
+
+
+presisQuegobernaronMenos4 [] = []
+presisQuegobernaronMenos4 (x:xs) = if tiempoQueGoberno x < 4 then x: presisQuegobernaronMenos4 xs else presisQuegobernaronMenos4 xs
+
+mergeSort :: (Ord a) => [a] -> [a]
+mergeSort [] = []
+mergeSort [x] = [x]
+mergeSort xs = merge (mergeSort left) (mergeSort right)
+  where
+    splitInHalf [] = ([], [])
+    splitInHalf [x] = ([x], [])
+    splitInHalf (x:y:xs) = (x:left, y:right)
+      where
+        (left, right) = splitInHalf xs
+
+    (left, right) = splitInHalf xs
+
+    merge :: (Ord a) => [a] -> [a] -> [a]
+    merge [] ys = ys
+    merge xs [] = xs
+    merge (x:xs) (y:ys)
+      | x <= y = x : merge xs (y:ys)
+      | otherwise = y : merge (x:xs) ys
+
+main :: IO ()
+main = do
+    let lista = [5, 1, 4, 2, 8]
+    let listaOrdenada = mergeSort lista
+    print listaOrdenada
+
+
+----------------------------------------------
+
+data Empleado = Docente Nombre Horas SueldoHora Materias
+              | Administrativo Nombre Salario Cargo deriving (Show,Eq)
+type Nombre = String
+type Horas = Int
+type SueldoHora = Int
+type Salario = Int
+type Materias = [String]
+type Cargo = String
+
+{-a) Definir una función que reciba dos empleados y devuelva verdad si ambos tienen el
+mismo ingreso mensual pero uno es docente y el otro es administrativo.
+b) Definir una función que reciba una lista de empleados y devuelva el nombre del
+docente que dicta mayor cantidad de materias.
+c) Definir una función que reciba una lista de empleados y devuelva el nombre del
+empleado que tiene mayor salario mensual.
+
+d) Definir una función que reciba un empleado (e) y una lista ordenada ascendentemente
+de acuerdo al ingreso mensual percibido (ls) y que inserte e en ls en la posición que le
+corresponde, de modo que la lista resultante siga ordenada.
+e) Definir una función que reciba una lista de empleados y devuelva la lista ordenada
+ascendentemente por ingresos mensuales del empelado.-}
+
+doce = (Docente "juna" 200 10 ["fisica","compu","mate","labo","dinamica"])
+doce2 = (Docente "juna2" 200 10 ["fisica","compu","mate","casa"])
+doce3 = (Docente "juna3" 200 30 ["fisica","compu","mate"])
+doce4 = (Docente "juna4" 200 10 ["fisica","compu"])
+
+amin = (Administrativo "pepe" 2001 "jefe")
+
+ingresoMensual:: Empleado -> Int
+ingresoMensual (Docente _ horas sueldoHora _) = horas * sueldoHora
+ingresoMensual (Administrativo _ salario _) = salario
+
+a1 emp1@(Docente _ horas sueldoHora _) emp2@(Administrativo _ salario _) = if ingresoMensual emp1 == ingresoMensual emp2 then True else False
+
+numeroMaterias (Docente _ _ _ materias) = length materias
+
+nombreEmpleado (Administrativo nombre _ _ ) = nombre
+nombreEmpleado (Docente nombre _ _ _) = nombre
+
+quienDictaMas [x] = nombreEmpleado x
+quienDictaMas (x:y:xs) = if numeroMaterias x > numeroMaterias y then quienDictaMas (x:xs) else quienDictaMas (y:xs)
+
+mayorSalarioMensual [x] = nombreEmpleado x
+mayorSalarioMensual (x:y:xs) = if ingresoMensual x > ingresoMensual y then mayorSalarioMensual (x:xs) else mayorSalarioMensual (y:xs)
+
+--tipos recursivos 
+data Natural = Cero | Sgte Natural
+        deriving Show
+
+
+entero2Natural:: Int -> Natural
+entero2Natural 0 = Cero
+entero2Natural n = Sgte(entero2Natural(n-1))
+
+natural2Entero :: Natural -> Int 
+natural2Entero Cero = 0
+natural2Entero (Sgte n) = 1+(natural2Entero n)
+
+
+sumaT Cero Cero = Cero
+sumaT (Sgte n) Cero = Sgte(sumaT n Cero)
+sumaT Cero (Sgte m) = Sgte(sumaT Cero m)
+sumaT (Sgte n)(Sgte m) = Sgte(Sgte(sumaT n m))
+
+restaT Cero _ = Cero
+restaT n Cero = n
+restaT (Sgte n) (Sgte m) = restaT n m
+
+
+multiT Cero _ = Cero
+multiT (Sgte n) m = sumaT m (multiT n m)
+
+
+expoT _ Cero = Sgte Cero
+expoT n (Sgte m) = multiT n (expoT n m)
+
+
+
+menorT _ Cero = False
+menorT Cero _ = True
+menorT (Sgte n) (Sgte m) = menorT n m
+
+
+mayorT _ Cero = True
+mayorT Cero _ = False
+mayorT (Sgte n) (Sgte m) = mayorT n m 
+
+
+esIgualT Cero Cero = True
+esIgualT _ Cero = False
+esIgualT Cero _ = False
+esIgualT (Sgte n) (Sgte m) = esIgualT n m
+
+
+cocienteT a b
+    | menorT a b = Cero  
+    | otherwise = Sgte (cocienteT (restaT a b) b)
+
+
+residuoT a b
+    | menorT a  b = a 
+    | otherwise = residuoT (restaT a b) b
+
+
+
+data Lista a = Vacia | Add a (Lista a)
+    deriving Show 
+
+    
+mimizip Vacia _ = Vacia
+mimizip _ Vacia = Vacia
+mimizip (Add x xs) (Add y ys) = Add (x,y) (mimizip xs ys)
+
+transfromarLista Vacia = []
+transfromarLista (Add x xs) = x: transfromarLista xs
+
+mimiMap f Vacia = []
+mimiMap f (Add x xs) = (f x) : (mimiMap f xs)
+
+mimizipWhit f Vacia _ = []
+mimizipWhit f _ Vacia = []
+mimizipWhit f (Add x xs) (Add y ys) = (f x y):(mimizipWhit f xs ys) 
+
+l1 = (Add 3(Add 2 Vacia)) 
+l2 = (Add 4 (Add 3(Add 2 Vacia))) 
+
+lista2Literal [] = Vacia
+lista2Literal (x:xs) = Add x (lista2Literal xs)
