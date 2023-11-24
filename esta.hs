@@ -1,4 +1,5 @@
-import Distribution.Compat.Lens (_1)
+import Data.Map.Internal.Debug (balanced)
+
 
 f1 :: Bool -> Int -> Int -> Int
 f1 x y z = if x then y+10 else z
@@ -869,6 +870,8 @@ residuoT a b
 
 
 
+
+
 data Lista a = Vacia | Add a (Lista a)
     deriving Show 
 
@@ -887,8 +890,336 @@ mimizipWhit f Vacia _ = []
 mimizipWhit f _ Vacia = []
 mimizipWhit f (Add x xs) (Add y ys) = (f x y):(mimizipWhit f xs ys) 
 
-l1 = (Add 3(Add 2 Vacia)) 
-l2 = (Add 4 (Add 3(Add 2 Vacia))) 
+l1 = (Add 3(Add 10 Vacia)) 
+l2 = (Add 1(Add 4 (Add 3(Add 2 Vacia)))) 
 
 lista2Literal [] = Vacia
 lista2Literal (x:xs) = Add x (lista2Literal xs)
+
+masmas Vacia ys = ys
+masmas(Add x xs) ys = Add x (masmas xs ys)
+
+matl = Add (Add 1 Vacia) (Add (Add 2 Vacia) Vacia)
+
+concatLista Vacia = Vacia
+concatLista (Add x xss) = masmas x (concatLista xss)
+
+miSum3  Vacia = 0
+miSum3 (Add x xs) = x + miSum3 xs
+
+
+miLength Vacia = 0
+miLength (Add x xs) =1 + miLength xs
+
+milast3 (Add x xs) = if miLength xs == 0 then x else milast3 xs  
+
+mihead3 (Add x xs) = x
+
+
+take3 0 _ = Vacia
+take3 i (Add x xs) =Add x (take3 (i-1) xs)
+
+mifilter3 f Vacia = Vacia
+mifilter3 f (Add x xs) = if f x then Add x (mifilter3 f xs)
+                         else mifilter3 f xs
+
+
+--mitail3 i Vacia = Vacia
+--mitail3 i (Add x xs) = if i == 0 then mitail3 (i+1) xs else Add x (mitail3 i xs)
+
+
+
+mitail4 0 (Add x xs) = mitail4 1 xs
+mitail4 _ (Add x xs) = Add x (mitail4 1 xs)
+mitail4 _ Vacia = Vacia
+
+
+drop3 i Vacia = Vacia
+drop3 i (Add x xs) = if i > 0 then drop3 (i-1) xs else  Add x (drop3 (i-1) xs)  
+
+
+
+data Arbol a = Hoja a |Rama (Arbol a) (Arbol a) 
+        deriving Show
+mapA f (Hoja x) = Hoja (f x)
+mapA f (Rama ai ad) = Rama (mapA f ai) (mapA f ad)
+
+ar1 =  Rama (Hoja 1) (Rama (Hoja 2) (Hoja 3))
+
+
+arbol2Lista (Hoja x) = [x]
+arbol2Lista (Rama i d) = (arbol2Lista i) ++ (arbol2Lista d)
+
+arbol2Listaa (Hoja x) = Add x Vacia
+arbol2Listaa (Rama i d) = masmas (arbol2Listaa i) (arbol2Listaa d)
+
+contarHojas (Hoja x) = 1
+contarHojas (Rama i d) = (contarHojas i) + (contarHojas d)
+
+profundidad (Hoja x) = 1
+profundidad (Rama i d) = 1 + max (profundidad i)  (profundidad d)
+
+
+data ArbolBinario a = Vacio | Nodo a (ArbolBinario a) (ArbolBinario a)
+            deriving Show
+
+sumaNodos Vacio = 0
+sumaNodos (Nodo x i d) = x +(sumaNodos i) + (sumaNodos d)
+
+
+arbolPrueba =
+  Branch 10
+    (Branch 5
+      (Branch 3 Leaf Leaf)
+      (Branch 7 Leaf Leaf)
+    )
+    (Branch 15
+      (Branch 12 Leaf Leaf)
+      (Branch 18 Leaf Leaf)
+    )
+
+
+
+arbolPrueba2 = Branch 200 
+    (Branch 150 
+        (Branch 100 Leaf Leaf)
+        (Branch 170 Leaf Leaf)
+    )
+    (Branch 280 
+        (Branch 250 Leaf Leaf)
+        (Branch 300 Leaf Leaf)
+    )
+
+
+mapBB f Vacio = Vacio
+mapBB f (Nodo x i d) = Nodo (f x) (mapBB f i) (mapBB f d)
+
+
+
+data ArbolB a = Leaf | Branch a (ArbolB a) (ArbolB a)
+        deriving Show
+
+
+list3 Leaf = []
+list3 (Branch x ai ad) = list3 ai ++ [x] ++ list3 ad
+
+
+
+list4 Leaf = []
+list4 (Branch x ai ad) = list4 ad ++ [x] ++ list4 ai
+
+
+-- practia de datos compuestos 
+{-1. Definir una función que reciba una nota y devuelva verdad(True) si esta es de la
+UMSS
+2. Definir una función que reciba una nota y devuelva su valor sólo en caso que sea de
+la Cato o de UMSS. En caso de ser de la Cato, que devuelva el promedio de las dos
+notas.
+3. Definir una función que reciba una lista de notas y devuelva únicamente las notas de
+aprobación. La nota de aprobación para el caso de la Cato es cuando el promedio de
+sus valores componentes es mayor a 50 y de la Maestría, cuando el valor es A,B o C.
+
+
+4. Definir una función que reciba una lista de notas y las devuelva ordenadas (suponer
+que una nota de San Simón es mayor a un nota de la Cato y una de Maestría es
+mayor que una de la UMSS)
+5. Inventar 3 tipos de datos compuestos, para cada tipo inventar 3 funciones que se
+apliquen al mismo-}
+
+data Nota = Maestria Char |Cato Int Int|Umss Int
+    deriving Show
+
+esUmss:: Nota -> Bool 
+esUmss (Umss x) = True
+esUmss _ = False 
+
+promedioU (Umss x) = x
+promedioU (Cato x y) = div (x+y) 2
+
+
+listaNotas [] = []
+listaNotas (x:xs) = if aprueba x then x : listaNotas xs else listaNotas xs
+
+aprueba (Umss x) = if promedioU (Umss x) > 50 then True else False
+aprueba (Cato x y) = if promedioU (Cato x y) > 50 then True else False
+aprueba (Maestria c) |c == 'A' = True
+                     |c == 'B'= True
+                     |c =='C' = True
+                     |otherwise = False
+
+listanotas1 = [(Cato 60 51),(Umss 51), (Umss 72),(Maestria 'A'), (Maestria 'F')]
+
+
+mayorNota:: Nota -> Nota -> Nota
+mayorNota _ (Maestria n) = (Maestria n) 
+mayorNota (Maestria n) _ = (Maestria n)
+
+mayorNota (Umss x) (Cato y y2) = (Umss x)
+mayorNota (Cato y y2) (Umss x)  = (Umss x)
+
+mayorNota (Umss x) (Umss x2)  | x < x2 = (Umss x2)
+                              |otherwise = (Umss x)
+                              
+mayorNota (Cato y1 y11) (Cato y2 y22) | (promedioU (Cato y1 y11)) < (promedioU (Cato y2 y22)) = (Cato y2 y22)
+                                      |otherwise = (Cato y1 y11)
+{-
+mayorNota (Maestria x) (Maestria y) | x == 'A' && y == 'A' = (Maestria x)
+                                    | x == 'A'  = (Maestria x)
+                                    | y == 'A' = (Maestria y)
+-}
+ordenarBurbuja lista = ordenarBurbujaRec lista (length lista)
+
+ordenarBurbujaRec lista 0 = lista
+ordenarBurbujaRec lista n = ordenarBurbujaRec (iterarBurbuja lista) (n - 1)
+
+iterarBurbuja [] = []
+iterarBurbuja [x] = [x]
+iterarBurbuja (x:y:resto)
+    | x > y     = y : iterarBurbuja (x:resto)
+    | otherwise = x : iterarBurbuja (y:resto)
+
+instance Eq Nota where 
+    (Umss n1) == (Umss n2) = n1 == n2
+
+
+
+
+
+
+estaOrdenadaNota :: [Nota] -> Bool
+estaOrdenadaNota [x] = True
+estaOrdenadaNota ((Umss _):(Umss n):xs)  = estaOrdenadaNota ((Umss n):xs)
+estaOrdenadaNota ((Cato _ _):(Cato n1 n2):xs)  = estaOrdenadaNota ((Cato n1 n2):xs)
+estaOrdenadaNota ((Maestria _):(Maestria n):xs)  = estaOrdenadaNota ((Maestria n):xs)
+estaOrdenadaNota ((Maestria _):_:xs)  = False
+estaOrdenadaNota (_:(Maestria n):xs)  = estaOrdenadaNota ((Maestria n):xs)
+estaOrdenadaNota ((Umss _):(Cato _ _):xs)  = False
+estaOrdenadaNota ((Cato _ _):(Umss n):xs)  = estaOrdenadaNota ((Umss n):xs)
+
+
+{-5. Inventar 3 tipos de datos compuestos, para cada tipo inventar 3 funciones que se
+apliquen al mismo
+
+6. Definir una función que reciba 4 número y devuelva la suma del mayor de los 2
+primeros con el mayor de los 2 siguientes utilizar la función mayor definida
+data Rpta = Entero Int| Mensaje String
+mayor x y | x > y = Entero x
+| y > x = Entero y
+| otherwise = Mensaje “Iguales”
+
+7. Definir un tipo de datos para representar números enteros (Positivos y negativos).
+Utilizando este tipo definir los operadores: +,-,*,div
+
+8. Definir una función que reciba dos listas xs, ys (del tipo Lista a) y devuelva cuantas
+veces ocurre xs en ys.-}
+
+
+data Nota2 = Numero Int | Letra Char
+    deriving Show
+
+queNota (Numero n) = (Numero n)
+queNota (Letra n) = (Letra n)
+
+
+data Rpta = Entero Int| Mensaje String
+    deriving Show
+mayor23 x y | x > y = Entero x
+          | y > x = Entero y
+          | otherwise = Mensaje "Iguales"
+
+sonIguales x y = case mayor23 x y of
+    Mensaje "Iguales" -> Entero x
+    resultado -> resultado
+
+sumaM (Entero x) (Entero y) = Entero (x+y)
+
+sumaMayores x1 x2 y1 y2 =sumaM (sonIguales x1 x2 ) (sonIguales y1 y2)
+
+instance Eq Rpta where 
+    (Mensaje x) == (Mensaje y) = x==y
+
+
+
+
+
+data Positivos = Positivo Int | Negativo Int
+    deriving Show 
+
+
+miltiplicacionData (Positivo x) (Positivo y) = Positivo (x*y)
+miltiplicacionData (Negativo x) (Negativo y) = Negativo (x*y)
+miltiplicacionData (Negativo x) (Positivo y) = Negativo (x*y)
+miltiplicacionData (Positivo x) (Negativo y) = Negativo (x*y)
+
+sumaData (Positivo x) (Positivo y) = Positivo (x+y)
+sumaData (Negativo x) (Negativo y) = Negativo (x+y)
+sumaData (Negativo x) (Positivo y) = if x>=y then Negativo (x-y) else Positivo (x-y)
+sumaData (Positivo x) (Negativo y) = if x>=y then Positivo (x-y) else Negativo (x-y)
+
+
+data Tree a = Nada | Rami a (Tree a) (Tree a)
+    deriving Show
+
+
+prof Nada = 0
+prof (Rami x ai ad) = 1 +  max(prof ai)(prof ad) 
+
+peso Nada = 0
+peso (Rami x ai ad) = (prof ad)-(prof ai)
+
+a1T = Rami 50 (Rami 40 Nada Nada)(Rami 60 Nada Nada)
+
+a2T = Rami 200 (Rami 150 Nada Nada)(Rami 250 Nada Nada)
+
+a3T = Rami 100 (a1T) (a2T)
+
+balancear a@(Rami x ai ad)
+            |peso a == -2 && peso ai == -1 = caso1 a
+            |peso a == 2 && peso ad == 1 = caso2 a
+            |peso a == -2 && peso ai == 1 = caso3 a
+            |peso a == 2 && peso ad == -1 = caso4 a 
+            |otherwise  = a
+
+
+        
+caso1 (Rami y (Rami z ai2 ad2) ad1) = Rami z ai2 (Rami y ad2 ad1)
+caso2 (Rami y ai1 (Rami z ai2 ad2)) = Rami z (Rami y ai2 ai1) ad2
+caso3 (Rami y ai (Rami z ad1 ad2)) = Rami z (Rami y ai ad1) ad2
+caso4 (Rami y (Rami z ai1 ai2) ad) = Rami z ai1 (Rami y ai2 ad)
+
+
+arbolP1 = Rami 20 (Rami 10 (Rami 5 Nada Nada) Nada)(Rami 30 Nada Nada)
+arbolP2 = Rami 40 (arbolP1)(Rami 60 Nada Nada) 
+arbolP3 = Rami 120 (Rami 110 Nada Nada) (Rami 130 Nada Nada)
+arbolP4 = Rami 180 (Rami 170 Nada Nada) Nada
+arbolP5 = Rami 150 (arbolP3) (arbolP4) 
+arbolPFin = Rami 80 (arbolP2) (arbolP5)
+
+pCaso2 = Rami 100 Nada (pCaso22)
+pCaso22 :: Tree Integer
+pCaso22 = Rami 150 Nada (Rami 152 Nada Nada) 
+                      
+
+data ArbolDe3 a b = Hojita a | Ramita b (ArbolDe3 a b) (ArbolDe3 a b) (ArbolDe3 a b)
+        deriving Show  
+
+
+
+arb1 = Ramita 'a' (Hojita 1) (Hojita 2) (Hojita 3)
+arb2 = Ramita 'b' (arb1) (arb1) (arb1)
+
+
+
+arbolTupla arb = (sumatoriaArb arb , listaArb arb)
+
+sumatoriaArb (Hojita x) = x
+sumatoriaArb (Ramita _ ai am ad) = (sumatoriaArb ai) + (sumatoriaArb am) + (sumatoriaArb ad)
+
+listaArb (Hojita _ ) = ""
+listaArb (Ramita x ai am ad) = x : ((listaArb ai) ++ (listaArb am) ++ (listaArb ad))  
+
+
+arbolTupla2 arb = (listaInt, listaChar)
+
+listaInt Hojita x = Add x Vacia
+listaInt (Ramita _ ai am ad) = listaInt ai 
