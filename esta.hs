@@ -616,8 +616,14 @@ el departamento.
 4. Una función que reciba un lista de departamentos y devuelva aquellos que
 pertenecen a la zona de los llanos o de los valles.-}
 
-data Zonas = Valles|Llanos|Altiplano deriving (Show,Eq)
+data Zonas = Valles|Llanos|Altiplano deriving Show
 data Departamentos = CB|SC|LP|OR|SU|PO|TA|BN|PA deriving (Show,Eq)
+
+instance Eq Zonas where
+    Valles == Valles = True
+    Llanos == Llanos = True
+    Altiplano == Altiplano = True
+    _ == _ = False
 
 caracteristicas::Zonas -> String 
 caracteristicas zon 
@@ -1037,6 +1043,8 @@ promedioU (Umss x) = x
 promedioU (Cato x y) = div (x+y) 2
 
 
+
+
 listaNotas [] = []
 listaNotas (x:xs) = if aprueba x then x : listaNotas xs else listaNotas xs
 
@@ -1217,9 +1225,3 @@ sumatoriaArb (Ramita _ ai am ad) = (sumatoriaArb ai) + (sumatoriaArb am) + (suma
 
 listaArb (Hojita _ ) = ""
 listaArb (Ramita x ai am ad) = x : ((listaArb ai) ++ (listaArb am) ++ (listaArb ad))  
-
-
-arbolTupla2 arb = (listaInt, listaChar)
-
-listaInt Hojita x = Add x Vacia
-listaInt (Ramita _ ai am ad) = listaInt ai 
